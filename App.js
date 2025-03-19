@@ -1,107 +1,132 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Pedometer } from 'expo-sensors';
-import * as Progress from 'react-native-progress'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import PedometerCircle from './components/PedometerCircle';
+import Buttons from './components/Buttons';
+import { styles } from './styles/styles';
 
 export default function App() {
-  const [steps, setSteps] = useState(0); 
-  const weeklyGoal = 10000; 
-  const [coins, setCoins] = useState(0); 
+  const [steps, setSteps] = useState(0);
+  const weeklyGoal = 10000;
+  const [coins, setCoins] = useState(0);
+  const [startDate, setStartDate] = useState(null);
+
+  const storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.log("  Error saving data:", error);
+    }
+  };
+
+  const getData = async (key) => {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return value != null ? JSON.parse(value) : null;
+    } catch (error) {
+      console.log("Error reading data:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    let subscription;
-    Pedometer.isAvailableAsync().then(result => {
-        if (!result) { 
+    const loadData = async () => {
+      const savedSteps = await getData('steps');
+      const savedCoins = await getData('coins');
+      const savedStartDate = await getData('startDate');
+
+      const now = new Date();
+      let weekStart = savedStartDate ? new Date(savedStartDate) : now;
+
+      const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;
+      if (savedStartDate && now - weekStart >= oneWeekInMs) {
+        setSteps(0);
+        setStartDate(now);
+        storeData('steps', 0);
+        storeData('startDate', now.toISOString());
+      } else {
+        setSteps(savedSteps || 0);
+        setCoins(savedCoins || 0);
+        setStartDate(weekStart);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    let lastSteps = 0; 
+    Pedometer.isAvailableAsync()
+      .then(result => {
+        if (!result) {
           console.log("The pedometer is not available on this phone.");
           return;
         }
-        subscription = Pedometer.watchStepCount(result => {
-          setSteps(result.steps); 
-        });
+
+        const interval = setInterval(() => {
+          const end = new Date();
+          const start = new Date();
+          start.setHours(0, 0, 0, 0);
+
+          Pedometer.getStepCountAsync(start, end).then(async result => {
+            const dailySteps = result.steps; 
+            const stepDifference = dailySteps - lastSteps; 
+
+            if (stepDifference > 0) {
+              setSteps(prevSteps => prevSteps + stepDifference);
+              storeData('steps', prevSteps => prevSteps + stepDifference);
+            }
+
+            lastSteps = dailySteps; 
+          }).catch(error => {
+            console.log("Error receiving steps:", error);
+          });
+        }, 1000);
+
+        return () => clearInterval(interval);
       })
       .catch(error => {
         console.log("Pedometer test error:", error);
-      });
+  });
+},[]);
 
-    return () => subscription && subscription.remove();
-  }, []);
-
-  const convertToCoins = () => {
+  const convertToCoins = async () => {
     if (steps === 0) return;
-    const newCoins = Math.floor(steps / 1000) * 10; 
-    setCoins(prevCoins => prevCoins + newCoins); 
-    setSteps(0)
+    const newCoins = Math.floor(steps / 1000) * 10;
+    const updatedCoins = coins + newCoins;
+    setCoins(updatedCoins);
+    setSteps(0);
+    await storeData('coins', updatedCoins);
+    await storeData('steps', 0);
   };
-
-  const progress = steps > weeklyGoal ? 1 : steps / weeklyGoal; 
-  const progressPercent = Math.round(progress * 100);
-
-  const buttonStyle = {
-    backgroundColor: steps > 0 ? '#77d4d4' : '#B0BEC5',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-  };
-
 
   return (
     <View style={styles.container}>
-            <Text style={styles.goalText}>Weekly target: {weeklyGoal} steps</Text>
+      <View style={styles.topLeftContainer}>
+        <TouchableOpacity style={styles.coinButton}>
+          <Text style={styles.buttonText}>My coins: {coins} 💰</Text>
+        </TouchableOpacity>
+      </View>
 
-      <Progress.Circle
-        progress={progress} 
-        size={300} 
-        thickness={10} 
-        color="#4CAF50" 
-        unfilledColor="#E0E0E0"
-        showsText={false} 
-      >
-        <Text style={styles.stepsText}>{steps}</Text>
-      </Progress.Circle>
+      <View style={styles.topRightContainer}>
+        <TouchableOpacity
+          style={styles.giftShopButton}
+          onPress={() => navigation.navigate('Shop')}
+        >
+          <Text style={styles.buttonText}>Gift Shop 🎁</Text>
+        </TouchableOpacity>
+      </View>
 
-      <Text style={styles.progressText}>You have progressed: {progressPercent}%</Text>
+      <View style={styles.goalContainer}>
+        <Text style={styles.goalText}>Weekly target: {weeklyGoal} steps</Text>
+      </View>
 
-      <TouchableOpacity style={buttonStyle} onPress={convertToCoins} disabled={steps === 0}>
-        <Text style={styles.buttonText}>Convert to currencies  ({coins})</Text>
-      </TouchableOpacity>
+      <PedometerCircle steps={steps} weeklyGoal={weeklyGoal} />
 
-      <TouchableOpacity style={styles.coinButton}>
-        <Text style={styles.buttonText}> my coins: {coins}</Text>
-      </TouchableOpacity>
-
+      <Buttons steps={steps} coins={coins} convertToCoins={convertToCoins} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-  },
-  stepsText: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  goalText: {
-    fontSize: 18,
-    marginTop: 20,
-    marginBottom: 50,
-  },
-  progressText: {
-    fontSize: 16,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  coinButton: {
-    backgroundColor: '#FFD700',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-});
