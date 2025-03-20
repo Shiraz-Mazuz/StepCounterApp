@@ -3,24 +3,39 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5F5F5',
+    paddingTop: 20,
+    alignItems: 'center',
+    paddingBottom: 20,
   },
   circleContainer: {
-    position: 'relative',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  stepsOverlay: {
+    position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
   },
   stepsText: {
-    fontSize: 50,
+    fontSize: 60,
     fontWeight: 'bold',
+    color: '#333',
     textAlign: 'center',
+    marginTop: 50,
+  },
+  stepsLabel: {
+    fontSize:20,
+    color: '#666', 
+    textAlign: 'center',
+    marginTop: 5,
   },
   goalContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 80,
     marginBottom: 20,
   },
   goalText: {
@@ -54,8 +69,30 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   topLeftContainer: {
-    position: 'absolute', // ממקם את הכפתור ביחס ל-View הראשי
-    top: 40, // מרחק מהחלק העליון של המסך
-    left: 20, // מרחק מהצד השמאלי של המסך
+    position: 'absolute', 
+    top: 40, 
+    left: 20, 
+  },
+  topRightContainer: {
+  position: 'absolute',
+  top: 40,
+  right: 20,
+},
+  containershop: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingTop: 20,
+    alignItems: 'center',
+  },
+  titleshop: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  subtitleshop: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
