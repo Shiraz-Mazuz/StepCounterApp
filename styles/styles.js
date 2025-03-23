@@ -95,4 +95,48 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+},
+modalContent: {
+    backgroundColor: 'white',
+    padding: 30,
+    borderRadius: 15,
+    width: 300,
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+},
+modalTitleBox:{
+backgroundColor: '#ffff69',
+fontSize: 30,
+borderRadius:5,
+marginBottom:30,
+
+},
+modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+},
+modalButton: {
+    marginTop: 10,
+    backgroundColor: '#fafafa',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+},
+modalButtonText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#000',
+},
 });

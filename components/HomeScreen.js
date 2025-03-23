@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import AsyncStorage  from '@react-native-async-storage/async-storage';
 import PedometerCircle from './PedometerCircle';
 import Buttons from './Buttons';
-import * as Progress from 'react-native-progress';
 import { styles } from '../styles/styles';
 
 
@@ -13,6 +12,11 @@ export default function HomeScreen({navigation}) {
     const [steps, setSteps] = useState(0);
     const weeklyGoal = 10000;
     const [coins, setCoins] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [convertedCoins, setConvertedCoins] = useState(0);
+    const fadeAnim = useState(new Animated.Value(0))[0];
+    const [animatedCoins, setAnimatedCoins] = useState([]);
+    
    
   
     const storeData = async (key, value) => {
@@ -45,13 +49,12 @@ export default function HomeScreen({navigation}) {
         const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;
         if (savedStartDate && now - weekStart >= oneWeekInMs) {
           setSteps(0);
-          setStartDate(now);
           storeData('steps', 0);
           storeData('startDate', now.toISOString());
         } else {
           setSteps(savedSteps || 0);
           setCoins(savedCoins || 0);
-          setStartDate(weekStart);
+         
         }
       };
   
@@ -98,12 +101,39 @@ export default function HomeScreen({navigation}) {
       if (steps === 0) return;
       const newCoins = Math.floor(steps / 1000) * 10;
       const updatedCoins = coins + newCoins;
+      setConvertedCoins(newCoins)
       setCoins(updatedCoins);
       setSteps(0);
       await storeData('coins', updatedCoins);
       await storeData('steps', 0);
+
+      setModalVisible(true);
+      startCoinsAnimation()
     };
+
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim,{
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+    }).start()
   
+const startCoinsAnimation = () => {
+let newCoins =[];
+for (let i = 0; i< 5; i++){
+    let animatedValue = new Animated.Value(0)
+    newCoins.push({ id: i, animatedValue})
+    Animated.timing(animatedValue,{
+        toValue: 1,
+        duration: 1000 + i * 100,
+        useNativeDriver: true,
+    }).start(()=>{
+        if (i === 4) setAnimatedCoins([])
+    })
+}
+setAnimatedCoins(newCoins)
+}
+
     return (
       <View style={styles.container}>
         <View style={styles.topLeftContainer}>
@@ -127,6 +157,49 @@ export default function HomeScreen({navigation}) {
         <PedometerCircle steps={steps} weeklyGoal={weeklyGoal} />
   
         <Buttons steps={steps} coins={coins} convertToCoins={convertToCoins} />
+       
+        <Modal visible={modalVisible} transparent animationType="fade">
+             <View style={styles.modalContainer}>
+          <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
+            <View style={styles.modalTitleBox}>
+                <Text style={styles.modalText}> 🎉 congratulations 🎉</Text>
+            </View>
+             <Text style={styles.modalText}> You received {convertedCoins} coins! 💰 </Text>
+           <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
+             <Text style={styles.modalButtonText}>✖</Text>
+            </TouchableOpacity>
+        </Animated.View>
+    </View>
+</Modal>
+{animatedCoins.map(({ id, animatedValue }) => (
+    <Animated.View
+        key={id}
+        style={{
+            position: 'absolute',
+            top: animatedValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [300, 50] 
+            }),
+            left: animatedValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [150, 20] 
+            }),
+            opacity: animatedValue.interpolate({
+                inputRange: [0, 0.8, 1],
+                outputRange: [1, 1, 0] 
+            }),
+            transform: [
+                {
+                    scale: animatedValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 0.5] 
+                    }),
+                },
+            ],
+        }}>
+        <Text style={{ fontSize: 25 }}>🪙</Text> 
+    </Animated.View>
+))}
       </View>
     );
   }
