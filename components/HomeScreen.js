@@ -16,7 +16,10 @@ export default function HomeScreen({navigation}) {
     const [convertedCoins, setConvertedCoins] = useState(0);
     const fadeAnim = useState(new Animated.Value(0))[0];
     const [animatedCoins, setAnimatedCoins] = useState([]);
-    
+    const [conversionConfig, setConversionConfig] = useState({
+        stepsPerThreshold: 1000, // ערך ברירת מחדל עד שהשרת מחזיר
+        coinsPerThreshold: 10,   // ערך ברירת מחדל עד שהשרת מחזיר
+      });
    
   
     const storeData = async (key, value) => {
@@ -27,6 +30,25 @@ export default function HomeScreen({navigation}) {
       }
     };
   
+
+    useEffect(() => {
+        const fetchConversionConfig = async () => {
+          try {
+            const response = await fetch('http://192.168.140.1:5000/api/conversion-config');
+            const data = await response.json();
+            setConversionConfig({
+              stepsPerThreshold: data.stepsPerThreshold,
+              coinsPerThreshold: data.coinsPerThreshold,
+            });
+          } catch (error) {
+            console.log("Error fetching conversion config:", error);
+          }
+        };
+    
+        fetchConversionConfig();
+      }, []);
+
+
     const getData = async (key) => {
       try {
         const value = await AsyncStorage.getItem(key);
@@ -176,30 +198,35 @@ setAnimatedCoins(newCoins)
         key={id}
         style={{
             position: 'absolute',
-            top: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [300, 50] 
-            }),
-            left: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [150, 20] 
-            }),
-            opacity: animatedValue.interpolate({
-                inputRange: [0, 0.8, 1],
-                outputRange: [1, 1, 0] 
-            }),
             transform: [
+                {
+                    translateY: animatedValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [400, 50] // תנועה מלמטה למעלה
+                    }),
+                },
+                {
+                    translateX: animatedValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [180, 20] // תנועה מצד לצד
+                    }),
+                },
                 {
                     scale: animatedValue.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [1, 0.5] 
+                        outputRange: [1, 0.5] // המטבע קטן כשהוא מתקרב ליעד
                     }),
                 },
             ],
+            opacity: animatedValue.interpolate({
+                inputRange: [0, 0.8, 1],
+                outputRange: [1, 1, 0] // המטבע נעלם בסוף האנימציה
+            }),
         }}>
         <Text style={{ fontSize: 25 }}>🪙</Text> 
     </Animated.View>
 ))}
+
       </View>
     );
   }
