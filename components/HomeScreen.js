@@ -187,10 +187,11 @@ setAnimatedCoins(newCoins)
                 <Text style={styles.modalText}> 🎉 congratulations 🎉</Text>
             </View>
              <Text style={styles.modalText}> You received {convertedCoins} coins! 💰 </Text>
-           <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
+         
+        </Animated.View>
+        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
              <Text style={styles.modalButtonText}>✖</Text>
             </TouchableOpacity>
-        </Animated.View>
     </View>
 </Modal>
 {animatedCoins.map(({ id, animatedValue }) => (
