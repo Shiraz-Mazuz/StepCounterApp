@@ -11,11 +11,11 @@ const Buttons = ({ steps, coins, convertToCoins }) => {
     <>
       <Animatable.View animation="pulse" iterationCount="infinite">
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: steps > 0 ? '#ff7f00' : '#B0BEC5' }]}
+          style={[styles.buttonConvert, { backgroundColor: steps > 0 ? '#ff7f00' : '#B0BEC5' }]}
           onPress={convertToCoins}
           disabled={steps === 0}
         >
-          <Text style={styles.buttonText}>Convert to currencies ({convertibleCoins}) 🪙</Text>
+          <Text style={styles.buttonConvertText}>Convert to currencies ({convertibleCoins}) 🪙</Text>
         </TouchableOpacity>
       </Animatable.View>
 

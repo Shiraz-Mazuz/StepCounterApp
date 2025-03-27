@@ -17,8 +17,8 @@ export default function HomeScreen({navigation}) {
     const fadeAnim = useState(new Animated.Value(0))[0];
     const [animatedCoins, setAnimatedCoins] = useState([]);
     const [conversionConfig, setConversionConfig] = useState({
-        stepsPerThreshold: 1000, // ערך ברירת מחדל עד שהשרת מחזיר
-        coinsPerThreshold: 10,   // ערך ברירת מחדל עד שהשרת מחזיר
+        stepsPerThreshold: 1000, 
+        coinsPerThreshold: 10,   
       });
    
   
@@ -32,7 +32,7 @@ export default function HomeScreen({navigation}) {
   
 
     useEffect(() => {
-        const fetchConversionConfig = async () => {
+        const ConversionConfig = async () => {
           try {
             const response = await fetch('http://192.168.140.1:5000/api/conversion-config');
             const data = await response.json();
@@ -45,7 +45,7 @@ export default function HomeScreen({navigation}) {
           }
         };
     
-        fetchConversionConfig();
+        ConversionConfig();
       }, []);
 
 

@@ -10,7 +10,7 @@ const PedometerCircle = ({ steps, weeklyGoal }) => {
     return (
       <>
      
-        <View style={{ position: 'relative', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ position: 'relative', justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 150 }}>
           <Progress.Circle
             progress={progress}
             size={300}
@@ -24,7 +24,7 @@ const PedometerCircle = ({ steps, weeklyGoal }) => {
           />
          <View style={styles.stepsOverlay}>
             <Text style={styles.stepsText}> {steps}</Text>
-            <Text style={{fontSize: 60, textAlign:'center'}}>🚶‍➡️</Text>
+            <Text style={{fontSize: 60, textAlign:'center'}}>🏃‍♂️‍</Text>
             <Text style={styles.stepsLabel}>steps</Text>
                 </View>
              </View>
