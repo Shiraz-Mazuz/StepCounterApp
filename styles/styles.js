@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
     elevation: 5,
   },
   giftShopButton: {
-    width: 140,
+    width: 120,
     height: 50,
     backgroundColor: '#FF69B4',
     padding: 15,
@@ -101,12 +101,12 @@ export const styles = StyleSheet.create({
   },
   topLeftContainer: {
     position: 'absolute', 
-    top: 40, 
+    top: 100, 
     left: 20, 
   },
   topRightContainer: {
   position: 'absolute',
-  top: 40,
+  top: 30,
   right: 20,
 },
   containershop: {
@@ -182,4 +182,130 @@ modalButtonText: {
     fontWeight: 'bold',
     color: '#000',
 },
+userContainer: {
+  flexDirection: "row", 
+  alignItems: "center",
+  justifyContent: 'flex-start',
+  marginTop: 20,
+  marginBottom: 20,
+  paddingRight: 190,
+},
+userImage: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  marginRight: 30,
+  
+},
+placeholderImage: {
+  width: 50,
+  height: 50,
+  borderRadius: 25,
+  backgroundColor: "#ccc",
+  justifyContent: "center",
+  alignItems: "center",
+  marginLeft: 10,
+},
+placeholderText: {
+  color: "#fff",
+  fontSize: 10,
+},
+textContainer: {
+  flexDirection: "column", 
+  justifyContent: "center",
+},
+helloText: {
+  fontSize: 20,
+  fontWeight: "bold",
+  color: "#333",
+  marginBottom: 5,
+},
+
+streakContainer: {
+    marginVertical: 10,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  streakText: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 20,
+  },
+  streakDaysContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 200,
+  },
+  streakDay: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  streakDayActive: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#4CAF50",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  streakDayText: {
+    fontSize: 14,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  checkmark: {
+    fontSize: 20,
+    color: "#FFF",
+    position: "absolute",
+  },
+  goalMarker: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  goalMarkerAchieved: {
+    backgroundColor: "#4CAF50",
+  },
+  goalMarkerText: {
+    fontSize: 12,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  goalReward: {
+    marginTop: 5,
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 2,
+  },
+  goalRewardText: {
+    fontSize: 12,
+    color: "#333",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+    width: "100%",
+  },
+  statItem: {
+    alignItems: "center",
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#666",
+  },
+  statValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+
 });
